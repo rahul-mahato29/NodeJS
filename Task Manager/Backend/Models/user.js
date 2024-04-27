@@ -1,5 +1,5 @@
-const validator = require('validator');
 const mongoose = require('mongoose');
+const validator = require('validator');
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -14,7 +14,7 @@ const UserSchema = new mongoose.Schema({
         unique: true,
         validate(value) {   
             if(!validator.isEmail(value)){     //validator.isEmail - check npm validator - external library
-                throw new error('Email is invalid')
+                throw new Error('Email is invalid')
             }
         }
     },
@@ -25,7 +25,7 @@ const UserSchema = new mongoose.Schema({
         trim: true,
         validate(value) {
             if(value.toLowerCase().includes('password')) {             //to check the "password" word is present or not, we used include() function.
-                throw new error('password cannot contain "password"')  //and islowercase to check password must be in lowercase only.
+                throw new Error('password cannot contain "password"')  //and islowercase to check password must be in lowercase only.
             }
         }
     },
@@ -34,15 +34,22 @@ const UserSchema = new mongoose.Schema({
         default: 0,     //if no-input then, by default age will zero
         validate(value) {
             if(value < 0){
-                throw new erro('age must be a positive number')
+                throw new Error('age must be a positive number')
             }
         }
     }
 })
 
+//middleware provided by mongoose
+// UserSchema.pre('save', async function (next) {
+//     const user = this;
+//     console.log(user);
+//     next();
+// })
+
 const User = mongoose.model('User', UserSchema);
 
-module.exports = User;
+module.exports = User
 
 
 //mongoose has only limited in-built validator, for complex validation we can created our own custom validator using "validate() function"

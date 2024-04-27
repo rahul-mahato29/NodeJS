@@ -1,5 +1,5 @@
 const express = require('express');
-const { Task } = require('../Database/db');
+const Task = require('../Models/task');
 const router = express.Router();
 
 router.use(express.json());

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const {User} = require('../Database/db')
+const User = require('../Models/user')
 
 router.use(express.json()); 
 

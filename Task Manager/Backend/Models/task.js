@@ -10,7 +10,13 @@ const TaskSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     }
+}, {
+    timestamps: true
 })
+
+
+
+
 // owner:{
 //     type: mongoose.Schema.Types.ObjectId,   //refer below
 //     ref: 'User',
@@ -18,8 +24,9 @@ const TaskSchema = new mongoose.Schema({
 
 // }
 
-//middleware
 
+
+//middleware
 TaskSchema.pre('save', (next) => {
     const task = this;
     console.log("Running before saving the task")

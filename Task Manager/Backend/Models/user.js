@@ -39,7 +39,14 @@ const UserSchema = new mongoose.Schema({
             }
         }
     }
+}, {
+    timestamps: true
 })
+
+
+
+
+
 
 // middleware provided by mongoose
 UserSchema.pre('save', async function (next) {

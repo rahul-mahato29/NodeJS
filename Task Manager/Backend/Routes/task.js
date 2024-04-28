@@ -15,35 +15,33 @@ router.post('/createTask', async (req, res) => {
     catch (e) {
         res.status(400).send(e)
     }
-
-
-    // task.save().then(() => {
-    //     res.status(201).send(task)
-    // })
-    // .catch((e) => {
-    //     res.status(400).send(e)  
-    // })
 })
 
 
 //check all the task
+//filter - allTasks?completed=true (only display completed)
 router.get('/allTasks', async (req, res) => {
+    const completedParam = req.query.completed;   //this will return a string of 'true' or 'false'
 
     try {
-        const taskInfo = await Task.find({})
+        let filter = {}
+
+        if (completedParam === 'true'){  
+            filter.completed = true;
+        }
+        else if (completedParam === 'false') {
+            filter.completed = false;
+        }
+
+
+        const taskInfo = await Task.find(filter)
         res.send(taskInfo)
     }
     catch (e) {
         res.status(400).send(e)
     }
-
-    // Task.find({}).then((taskInfo) => {
-    //     res.send(taskInfo);
-    // })
-    // .catch((e) => {
-    //     res.status(400).send(e)
-    // })  
 })
+
 
 //check task by it's id
 router.get('/:id', async (req, res) => {
@@ -59,16 +57,6 @@ router.get('/:id', async (req, res) => {
     catch (e) {
         res.status(400).send(e)
     }
-
-    // Task.findById(_id).then((task) => {
-    //     if(!task)
-    //         return res.status(404).send("Task not found")
-
-    //     res.send(task)
-    // })
-    // .catch((e) => {
-    //     res.status(400).send(e)
-    // })
 })
 
 

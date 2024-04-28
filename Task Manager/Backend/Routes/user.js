@@ -16,13 +16,6 @@ router.post('/registerUsers', async (req, res) => {
     catch (e) {
         res.status(400).send(e)
     }
-
-
-    // user.save().then(() => {
-    //     res.status(201).send(user);
-    // }).catch((e) => {
-    //     res.status(400).send(e);
-    // })
 })
 
 
@@ -36,13 +29,6 @@ router.get('/allUsers', async (req, res) => {
     catch (e) {
         res.status(400).send(e)
     }
-
-    // User.find({}).then((usersInfo) => {
-    //     res.status(200).send(usersInfo)
-    // })
-    // .catch((e) => {
-    //     res.status(400).send(e)
-    // })
 })
 
 
@@ -61,20 +47,6 @@ router.get('/:id', async (req, res) => {
     catch (e) {
         res.status(400).send(e)
     }
-
-
-    //previously we were handling like this
-    // User.findById(_id).then((user) => {
-    //     //if no user is present with this id
-    //     if(!user){
-    //         return res.status(404).send("User not found")
-    //     }
-
-    //     res.send(user);
-    // })
-    // .catch((e) => {
-    //     res.status(400).send(e);
-    // })
 })
 
 

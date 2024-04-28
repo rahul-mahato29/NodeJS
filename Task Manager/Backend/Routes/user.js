@@ -94,8 +94,15 @@ router.patch('/:id', async (req, res) => {
     }
     
 
-    try {      //(options) new - create a new user and runValidators will validate the updates that I am doing, if I am updating anything not present then it will throw an error.
-        const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true,})
+    try {      
+        //new approach, with the below approach - middleware for password converting to hash will not work, because we are not using save() and that middle ware will do precheck only for save().
+
+        const updatedUser = await User.findById(req.params.id);
+        updates.forEach((update) => updatedUser[update] = req.body[update])
+        await updatedUser.save()
+        
+        //(options) new - create a new user and runValidators will validate the updates that I am doing, if I am updating anything not present then it will throw an error.
+        // const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true,})
 
         if(!updatedUser) {
             res.status(404).send("User not found!");

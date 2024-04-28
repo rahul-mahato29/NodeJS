@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
+const bcrypt = require('bcrypt');
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -40,12 +41,16 @@ const UserSchema = new mongoose.Schema({
     }
 })
 
-//middleware provided by mongoose
-// UserSchema.pre('save', async function (next) {
-//     const user = this;
-//     console.log(user);
-//     next();
-// })
+// middleware provided by mongoose
+UserSchema.pre('save', async function (next) {
+    const user = this;
+    if(user.isModified('password')){
+        user.password = await bcrypt.hash(user.password, 8);
+    }
+    next();  //check, even it is working after commenting out next()
+})
+
+
 
 const User = mongoose.model('User', UserSchema);
 

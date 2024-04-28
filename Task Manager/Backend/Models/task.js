@@ -18,6 +18,15 @@ const TaskSchema = new mongoose.Schema({
 
 // }
 
+//middleware
+
+TaskSchema.pre('save', (next) => {
+    const task = this;
+    console.log("Running before saving the task")
+    
+    next();
+})
+
 
 const Task = mongoose.model('Task', TaskSchema);
 

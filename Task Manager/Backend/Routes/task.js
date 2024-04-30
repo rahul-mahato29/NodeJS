@@ -19,14 +19,15 @@ router.post('/createTask', async (req, res) => {
 
 
 //check all the task
-//filter - allTasks?completed=true (only display completed)
+//filter     - allTasks?completed=true (only display completed)
 //pagination - allTasks?limit=3&skip=0 (only display 3 task on the first page)
+//sorting    - allTasks?sortBy=createdAt:desc or asce (desc - decending & ace - acending)
 
 //http://localhost:3000/task/allTasks?completed=true&limit=3&skip=0 (to perform both filtering and pagination together)
 
 router.get('/allTasks', async (req, res) => {
     const completedParam = req.query.completed;   //this will return a string of 'true' or 'false'
-    const limit = parseInt(req.query.limit) || 3; //default limit is 3
+    const limit = parseInt(req.query.limit) || 5; //default limit is 3
     const skip = parseInt(req.query.skip) || 0;   //default limit is 0
 
     try {
@@ -39,8 +40,18 @@ router.get('/allTasks', async (req, res) => {
             filter.completed = false;
         }
 
+        //sorting
+        let sortOption = {}
+        if(req.query.sortBy){
+            const parts = req.query.sortBy.split(':')
+            sortOption[parts[0]] = parts[1] === 'desc' ? -1 : 1
+        }
 
-        const taskInfo = await Task.find(filter).limit(limit).skip(skip);
+
+        const taskInfo = await Task.find(filter)
+                                   .limit(limit)
+                                   .skip(skip)
+                                   .sort(sortOption);
         res.send(taskInfo)
     }
     catch (e) {

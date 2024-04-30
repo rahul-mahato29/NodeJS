@@ -124,4 +124,37 @@ router.delete('/:id', async (req, res) => {
 })
 
 
+//file upload
+const multer = require('multer');
+const upload = multer({
+    dest: 'images',           //folder destination, where upload file will be store
+    limits: {                 //lmiting the size of the document
+        fileSize: 1000000     //1MB
+    }, 
+    // fileFilter(req, file, callback) {    //type of file -> jpg, pdf, png...doc docx..etc
+    //     if(!file.originalname.match('.pdf')){
+    //         return callback(new Error('please upload a pdf'))
+    //     }
+
+    //     callback(undefined, true);
+    // }
+
+
+    //working with regular express, to write the same above function (fileFilter())  - using regex101.com to write the regular expression
+    fileFilter(req, file, callback){
+        if(file.originalname.match('/\.(pdf|doc|docx)$/')){    //the file type could be a pdf, doc or docx
+            return callback(new Error('please upload a pdf'))
+        }
+
+        callback(undefined, true);
+    }
+
+})
+
+router.post('/upload', upload.single('upload') ,(req, res) => {     //upload.single() - middleware provided by multer
+    res.send("File Uploaded Successfully!!")
+})
+
+
+
 module.exports = router;

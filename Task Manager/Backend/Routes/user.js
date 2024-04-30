@@ -104,5 +104,27 @@ router.delete('/:id', async (req, res) => {
 })
 
 
+//upload profile picture
+const multer = require('multer');
+const upload = multer({
+    dest: 'images', 
+    limits: {
+        fileSize: 1000000
+    },
+    fileFilter (req,file , callback) {
+        if(!file.originalname.match(/\.(png|jpg|jpeg)$/)) {            //regular express, you can also use or condition in the if-expression, if not comfortable with this express.
+            console.log("check")
+            return callback(new Error(' file should be png/jpg/jpeg'))
+        }
+
+        callback(undefined, true);
+    }
+})  
+
+router.post('/profileImg', upload.single('profilePic'), (req, res) => {
+    res.send('Profile Picture uploaded successfully');
+})
+
+
 
 module.exports = router;

@@ -153,6 +153,8 @@ const upload = multer({
 
 router.post('/upload', upload.single('upload') ,(req, res) => {     //upload.single() - middleware provided by multer
     res.send("File Uploaded Successfully!!")
+}, (error, req, res, next) => {
+    res.status(400).send({ error: error.message})
 })
 
 

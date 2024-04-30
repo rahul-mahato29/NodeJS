@@ -123,6 +123,8 @@ const upload = multer({
 
 router.post('/profileImg', upload.single('profilePic'), (req, res) => {
     res.send('Profile Picture uploaded successfully');
+}, (error, req, res, next) => {
+    res.status(400).send({ error: error.message})
 })
 
 

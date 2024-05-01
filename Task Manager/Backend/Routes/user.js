@@ -106,13 +106,12 @@ router.delete('/:id', async (req, res) => {
 
 //upload profile picture
 const multer = require('multer');
-const upload = multer({
-    dest: 'images', 
+const upload = multer({ 
     limits: {
         fileSize: 1000000
     },
     fileFilter (req,file , callback) {
-        if(!file.originalname.match(/\.(png|jpg|jpeg)$/)) {            //regular express, you can also use or condition in the if-expression, if not comfortable with this express.
+        if(!file.originalname.match(/\.(png|jpg|jpeg)$/)) {            //regular express, you can also use "or" condition in the if-expression, if not comfortable with this express.
             console.log("check")
             return callback(new Error(' file should be png/jpg/jpeg'))
         }
@@ -121,11 +120,17 @@ const upload = multer({
     }
 })  
 
-router.post('/profileImg', upload.single('profilePic'), (req, res) => {
+router.patch('/profileImg/:id', upload.single('avatar'),async (req, res) => {
+    const updateProfile = await User.findById(req.params.id);
+    updateProfile.avatar = req.file.buffer;                                 //data will be accessable on req.file.buffer (file-property)
+    updateProfile.save()                                                    //saving it to the user.profileImg (database)
+
     res.send('Profile Picture uploaded successfully');
 }, (error, req, res, next) => {
     res.status(400).send({ error: error.message})
 })
+
+
 
 
 

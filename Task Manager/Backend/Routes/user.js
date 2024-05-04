@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../Models/user')
+const sharp = require('sharp');
 
 router.use(express.json());
 
@@ -121,7 +122,11 @@ const upload = multer({
 
 router.patch('/UpdateProfileImg/:id', upload.single('avatar'), async (req, res) => {
     const updateProfile = await User.findById(req.params.id);
-    updateProfile.avatar = req.file.buffer;                                 //data will be accessable on req.file.buffer (file-property)
+
+    //using sharp-library for resizing the image and converting to a particular formate (here we are converting all the images to png)
+    const buffer = await sharp(req.file.buffer).resize({width: 250, height: 250}).png().toBuffer()
+
+    updateProfile.avatar = buffer;                                 //data will be accessable on req.file.buffer (file-property)
     updateProfile.save()                                                    //saving it to the user.profileImg (database)
 
     res.send('Profile Picture uploaded successfully');

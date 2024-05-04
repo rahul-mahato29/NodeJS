@@ -9,6 +9,9 @@ const TaskSchema = new mongoose.Schema({
     completed: {
         type: Boolean,
         default: false
+    },
+    taskfile: {
+        type: Buffer,
     }
 }, {
     timestamps: true

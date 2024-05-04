@@ -8,7 +8,7 @@ router.use(express.json());
 router.post('/createTask', async (req, res) => {
     const task = new Task(req.body)
 
-    try {   
+    try {
         await task.save()
         res.send(task)
     }
@@ -33,7 +33,7 @@ router.get('/allTasks', async (req, res) => {
     try {
         let filter = {}
 
-        if (completedParam === 'true'){  
+        if (completedParam === 'true') {
             filter.completed = true;
         }
         else if (completedParam === 'false') {
@@ -42,16 +42,16 @@ router.get('/allTasks', async (req, res) => {
 
         //sorting
         let sortOption = {}
-        if(req.query.sortBy){
+        if (req.query.sortBy) {
             const parts = req.query.sortBy.split(':')
             sortOption[parts[0]] = parts[1] === 'desc' ? -1 : 1
         }
 
 
         const taskInfo = await Task.find(filter)
-                                   .limit(limit)
-                                   .skip(skip)
-                                   .sort(sortOption);
+            .limit(limit)
+            .skip(skip)
+            .sort(sortOption);
         res.send(taskInfo)
     }
     catch (e) {
@@ -66,7 +66,7 @@ router.get('/:id', async (req, res) => {
 
     try {
         const task = await Task.findById(_id)
-        if(!task) 
+        if (!task)
             return res.status(404).send("Task not found")
 
         res.send(task)
@@ -86,20 +86,20 @@ router.patch('/:id', async (req, res) => {
         return allowedOperation.includes(fields);
     })
 
-    if(!isValidOperation){
-        return res.status(400).send({error: "Invalid Udate!"})
+    if (!isValidOperation) {
+        return res.status(400).send({ error: "Invalid Udate!" })
     }
 
     try {
         // const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true});
 
         const updatedTask = await Task.findById(req.params.id);
-        updatingFields.forEach((field) => updatedTask[field] = req.body[field] )
+        updatingFields.forEach((field) => updatedTask[field] = req.body[field])
         await updatedTask.save()
 
-        if(!updatedTask)
+        if (!updatedTask)
             return res.status(400).send(updatedTask)
-    
+
         res.send(updatedTask)
     }
     catch (e) {
@@ -109,10 +109,10 @@ router.patch('/:id', async (req, res) => {
 
 
 router.delete('/:id', async (req, res) => {
-    try{
+    try {
         const deletedTask = await Task.findByIdAndDelete(req.params.id)
 
-        if(!deletedTask) {
+        if (!deletedTask) {
             return res.status(404).send("Task not found!");
         }
 
@@ -125,12 +125,12 @@ router.delete('/:id', async (req, res) => {
 
 
 //file upload
-const multer = require('multer');
+const multer = require('multer');           //for file uploading we use - multer
 const upload = multer({
-    dest: 'images',           //folder destination, where upload file will be store
+    // dest: 'images',           //folder destination, where upload file will be store
     limits: {                 //lmiting the size of the document
         fileSize: 1000000     //1MB
-    }, 
+    },
     // fileFilter(req, file, callback) {    //type of file -> jpg, pdf, png...doc docx..etc
     //     if(!file.originalname.match('.pdf')){
     //         return callback(new Error('please upload a pdf'))
@@ -141,8 +141,8 @@ const upload = multer({
 
 
     //working with regular express, to write the same above function (fileFilter())  - using regex101.com to write the regular expression
-    fileFilter(req, file, callback){
-        if(file.originalname.match('/\.(pdf|doc|docx)$/')){    //the file type could be a pdf, doc or docx
+    fileFilter(req, file, callback) {
+        if (!file.originalname.match(/\.(pdf|doc|docx)$/)) {    //the file type could be a pdf, doc or docx
             return callback(new Error('please upload a pdf'))
         }
 
@@ -151,12 +151,35 @@ const upload = multer({
 
 })
 
-router.post('/upload', upload.single('upload') ,(req, res) => {     //upload.single() - middleware provided by multer
+router.post('/fileupload/:id', upload.single('taskfile'), async (req, res) => {     //upload.single() - middleware provided by multer
+    const uploadfile = await Task.findById(req.params.id);
+    uploadfile.taskfile = req.file.buffer;
+    uploadfile.save();
+
     res.send("File Uploaded Successfully!!")
 }, (error, req, res, next) => {
-    res.status(400).send({ error: error.message})
+    res.status(400).send({ error: error.message })
 })
 
 
+//Delete uploaded file   (another way to delete a particular field from the database)
+router.delete('/deletefile/:id', async (req, res) => {
+
+    try {
+        const getTask = await Task.findById(req.params.id);
+        if (!getTask) {
+            return res.status(404).send({ error: "Task not found" })
+        }
+
+        getTask.taskfile = undefined;
+        getTask.save();
+    }
+    catch (e) {
+        console.log(e);
+        return res.status(500).json({ error: "Internal server error" })
+    }
+
+    res.send("File Deleted");
+})
 
 module.exports = router;

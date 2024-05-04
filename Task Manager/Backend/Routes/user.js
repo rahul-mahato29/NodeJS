@@ -119,7 +119,7 @@ const upload = multer({
     }
 })
 
-router.patch('/profileImg/:id', upload.single('avatar'), async (req, res) => {
+router.patch('/UpdateProfileImg/:id', upload.single('avatar'), async (req, res) => {
     const updateProfile = await User.findById(req.params.id);
     updateProfile.avatar = req.file.buffer;                                 //data will be accessable on req.file.buffer (file-property)
     updateProfile.save()                                                    //saving it to the user.profileImg (database)
@@ -142,13 +142,45 @@ router.delete('/deleteProfile/:id', async (req, res) => {
 
         await user.updateOne({ $unset: { avatar: "" } })
     }
-    catch(e) {
+    catch (e) {
         console.log(e);
-        return res.status(500).json({error : "Internal server error"})
+        return res.status(500).json({ error: "Internal server error" })
     }
-    
+
     res.send("Profile picture deleted")
 })
 
 
+//get the profile picture in URL-formate,so that client can access it and see the image.
+router.get('/getProfile/:id', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+
+        if (!user || !user.avatar) {
+            return res.status(404).send({ error: "User Data not find" });
+        }
+
+        res.set('Content-Type', 'image/jpg')     //refer below
+        res.send(user.avatar)
+    }
+    catch (e) {
+        return res.status(500).send({ error: "Internal server error" })
+    }
+})
+
 module.exports = router;
+
+
+
+// res.set('Content-Type', 'image/jpg)
+
+// The res.set('Content-Type', 'image/jpg') statement is used to set the HTTP response header Content-Type to indicate
+// the type of content being sent back to the client. In this case, it's being set to 'image/jpg', which specifies that
+// the content being sent is an image in JPEG format.
+
+// When a client (such as a web browser) receives a response from a server, it looks at the Content-Type header to
+// determine how to handle the content. For example, if the Content-Type is set to 'image/jpg', the client knows that
+// it's receiving an image in JPEG format, and it can display it accordingly.
+
+// So, when you use res.set('Content-Type', 'image/jpg'), you're essentially telling the client that the response contains
+// an image in JPEG format, allowing it to interpret and display the content correctly.

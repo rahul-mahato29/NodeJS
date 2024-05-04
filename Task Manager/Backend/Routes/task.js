@@ -182,4 +182,22 @@ router.delete('/deletefile/:id', async (req, res) => {
     res.send("File Deleted");
 })
 
+//get task at client side in document formate
+router.get('/getTask/:id', async (req, res) => {
+
+    try {
+        const task = await Task.findById(req.params.id);
+
+        if (!task || !task.taskfile) {
+            return res.status(404).send({ error: "Task details not found" });
+        }
+
+        res.set('Content-Type', 'application/pdf')
+        res.send(task.taskfile);
+    }
+    catch (e) {
+        return res.status(500).send({ error: "Internal server error" });
+    }
+})
+
 module.exports = router;

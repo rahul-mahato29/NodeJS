@@ -3,6 +3,8 @@ const router = express.Router();
 const User = require('../Models/user')
 const sharp = require('sharp');
 
+const { sendWelcomeEmail, sendCancellationEmail } = require('../Emails/Account');   //it will show like an error line, but it's not an error
+
 router.use(express.json());
 
 //create user
@@ -13,6 +15,7 @@ router.post('/registerUsers', async (req, res) => {
     try {
         await user.save()
         res.send(user)
+        sendWelcomeEmail(user.name);
     }
     catch (e) {
         res.status(400).send(e)
@@ -97,6 +100,7 @@ router.delete('/:id', async (req, res) => {
             return res.status(400).send("User not found");
         }
 
+        sendCancellationEmail(deletedUser.name);
         res.send(deletedUser);
     }
     catch (error) {

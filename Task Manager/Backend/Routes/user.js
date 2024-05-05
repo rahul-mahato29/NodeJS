@@ -22,6 +22,18 @@ router.post('/registerUsers', async (req, res) => {
     }
 })
 
+//user login
+router.post('/login', async (req, res) => {
+    try{
+        //creating custom-function ('findByCredentials')
+        const user = await User.findByCredentials(req.body.email, req.body.password)
+        res.send(user)
+    }
+    catch(e) {
+        res.status(400).send()
+    }
+})
+
 
 //check all the users
 router.get('/allUsers', async (req, res) => {

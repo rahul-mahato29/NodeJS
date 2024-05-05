@@ -29,7 +29,7 @@ const TaskSchema = new mongoose.Schema({
 
 
 
-//middleware
+//middleware - one way of middleware provided by mongoose. (just testing it)
 TaskSchema.pre('save', (next) => {
     const task = this;
     console.log("Running before saving the task")

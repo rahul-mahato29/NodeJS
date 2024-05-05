@@ -13,6 +13,7 @@ const UserSchema = new mongoose.Schema({
         required: true,
         trim: true,
         unique: true,
+        // lowercase: true,
         validate(value) {   
             if(!validator.isEmail(value)){     //validator.isEmail - check npm validator - external library
                 throw new Error('Email is invalid')
@@ -47,11 +48,24 @@ const UserSchema = new mongoose.Schema({
 })
 
 
+//definging a custom function to check the provided email and password for login is correct or not
+UserSchema.statics.findByCredentials = async (email, password) => {
+    const user = await User.findOne({email})  //check this is present in database or not. (User defined below)
+
+    if(!user){
+        throw new Error('Unable to login');
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password)
+    if(!isMatch){
+        throw new Error('Unable to login')
+    }
+
+    return user;
+}
 
 
-
-
-// middleware provided by mongoose
+// middleware provided by mongoose - hash the plain text password before saving
 UserSchema.pre('save', async function (next) {
     const user = this;
     if(user.isModified('password')){

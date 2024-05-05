@@ -1,7 +1,7 @@
 const express = require('express');
 require('./Database/db')                 //setting connectivity between server and database
 const app = express();
-const port = 3000;
+const port = process.env.PORT
 
 const UserRoutes = require('./Routes/user');
 const TaskRoutes = require('./Routes/task');

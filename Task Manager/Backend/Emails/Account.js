@@ -18,7 +18,7 @@ const sendWelcomeEmail = async (name) => {
 
     // Message object
     let message = await transporter.sendMail({
-        from: 'Rahul Mahato <rahul2901@gmail.com>',
+        from: 'Rahul Mahato <rahul@gmail.com>',
         to: ' <mahatorahul2901@gmail.com>',
         subject: 'Welcome to our application!!',
         text: `Hello ${name}!`,
@@ -32,7 +32,7 @@ const sendCancellationEmail = async (name) => {
     
     // Message object
     let message = await transporter.sendMail({
-        from: 'Rahul Mahato <rahul2901@gmail.com>',
+        from: 'Rahul Mahato <rahul@gmail.com>',
         to: ' <mahatorahul2901@gmail.com>',
         subject: 'Very Sad, you are leaving us!!',
         text: `bye ${name}!`,

@@ -1,11 +1,12 @@
 const express = require('express');
 const Task = require('../Models/task');
 const router = express.Router();
+const auth = require('../Middleware/auth')
 
 router.use(express.json());
 
 //create task
-router.post('/createTask', async (req, res) => {
+router.post('/createTask', auth, async (req, res) => {
     const task = new Task(req.body)
 
     try {
@@ -25,7 +26,7 @@ router.post('/createTask', async (req, res) => {
 
 //http://localhost:3000/task/allTasks?completed=true&limit=3&skip=0 (to perform both filtering and pagination together)
 
-router.get('/allTasks', async (req, res) => {
+router.get('/allTasks', auth, async (req, res) => {
     const completedParam = req.query.completed;   //this will return a string of 'true' or 'false'
     const limit = parseInt(req.query.limit) || 5; //default limit is 3
     const skip = parseInt(req.query.skip) || 0;   //default limit is 0
@@ -61,7 +62,7 @@ router.get('/allTasks', async (req, res) => {
 
 
 //check task by it's id
-router.get('/:id', async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
     const _id = req.params.id;
 
     try {
@@ -77,7 +78,7 @@ router.get('/:id', async (req, res) => {
 })
 
 
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', auth, async (req, res) => {
 
     const updatingFields = Object.keys(req.body);
     const allowedOperation = ['description', 'completed'];
@@ -108,7 +109,7 @@ router.patch('/:id', async (req, res) => {
 })
 
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
     try {
         const deletedTask = await Task.findByIdAndDelete(req.params.id)
 
@@ -151,7 +152,7 @@ const upload = multer({
 
 })
 
-router.post('/fileupload/:id', upload.single('taskfile'), async (req, res) => {     //upload.single() - middleware provided by multer
+router.post('/fileupload/:id', auth, upload.single('taskfile'), async (req, res) => {     //upload.single() - middleware provided by multer
     const uploadfile = await Task.findById(req.params.id);
     uploadfile.taskfile = req.file.buffer;
     uploadfile.save();
@@ -163,7 +164,7 @@ router.post('/fileupload/:id', upload.single('taskfile'), async (req, res) => { 
 
 
 //Delete uploaded file   (another way to delete a particular field from the database)
-router.delete('/deletefile/:id', async (req, res) => {
+router.delete('/deletefile/:id', auth, async (req, res) => {
 
     try {
         const getTask = await Task.findById(req.params.id);
@@ -183,7 +184,7 @@ router.delete('/deletefile/:id', async (req, res) => {
 })
 
 //get task at client side in document formate
-router.get('/getTask/:id', async (req, res) => {
+router.get('/getTask/:id', auth, async (req, res) => {
 
     try {
         const task = await Task.findById(req.params.id);

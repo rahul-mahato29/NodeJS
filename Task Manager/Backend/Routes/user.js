@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require('../Models/user')
 const sharp = require('sharp');
+const auth = require('../Middleware/auth')
 
 const { sendWelcomeEmail, sendCancellationEmail } = require('../Emails/Account');   //it will show like an error line, but it's not an error
 
@@ -38,8 +39,7 @@ router.post('/login', async (req, res) => {
 
 
 //check all the users
-router.get('/allUsers', async (req, res) => {
-
+router.get('/allUsers', auth, async (req, res) => {
     try {
         const userInfo = await User.find({})
         res.send(userInfo)
@@ -51,7 +51,7 @@ router.get('/allUsers', async (req, res) => {
 
 
 //check indivisual user by thier id
-router.get('/:id', async (req, res) => {
+router.get('/:id', auth, async (req, res) => {
     const _id = req.params.id;
 
     try {
@@ -69,7 +69,7 @@ router.get('/:id', async (req, res) => {
 
 
 //update users information
-router.patch('/:id', async (req, res) => {
+router.patch('/:id', auth, async (req, res) => {
     //Error handling
     const updates = Object.keys(req.body);  //return an array of all the fields that we are trying to update
     const allowedUpdates = ['name', 'email', 'password', 'age'];
@@ -106,7 +106,7 @@ router.patch('/:id', async (req, res) => {
 })
 
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', auth, async (req, res) => {
     try {
         const deletedUser = await User.findByIdAndDelete(req.params.id);
 
@@ -138,7 +138,7 @@ const upload = multer({
     }
 })
 
-router.patch('/UpdateProfileImg/:id', upload.single('avatar'), async (req, res) => {
+router.patch('/UpdateProfileImg/:id', auth, upload.single('avatar'), async (req, res) => {
     const updateProfile = await User.findById(req.params.id);
 
     //using sharp-library for resizing the image and converting to a particular formate (here we are converting all the images to png)
@@ -155,7 +155,7 @@ router.patch('/UpdateProfileImg/:id', upload.single('avatar'), async (req, res) 
 
 
 //delete profile picture   (The "$unset" operator deletes a particular field.)
-router.delete('/deleteProfile/:id', async (req, res) => {
+router.delete('/deleteProfile/:id', auth, async (req, res) => {
 
     try {
         const user = await User.findById(req.params.id);
@@ -175,7 +175,7 @@ router.delete('/deleteProfile/:id', async (req, res) => {
 
 
 //get the profile picture in URL-formate,so that client can access it and see the image.
-router.get('/getProfile/:id', async (req, res) => {
+router.get('/getProfile/:id', auth, async (req, res) => {
     try {
         const user = await User.findById(req.params.id);
 

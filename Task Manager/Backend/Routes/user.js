@@ -14,7 +14,8 @@ router.post('/registerUsers', async (req, res) => {
     //handling all the promise using async-await instead we were doing previously, we can check below we were handling it before.
     try {
         await user.save()
-        res.send(user)
+        const token = await user.generateAuthToken();   //custom-function for generating the JSON-WEB-TOKEN
+        res.send({user, token})
         sendWelcomeEmail(user.name);
     }
     catch (e) {
@@ -27,7 +28,8 @@ router.post('/login', async (req, res) => {
     try{
         //creating custom-function ('findByCredentials')
         const user = await User.findByCredentials(req.body.email, req.body.password)
-        res.send(user)
+        const token = await user.generateAuthToken();
+        res.send({user, token})
     }
     catch(e) {
         res.status(400).send()

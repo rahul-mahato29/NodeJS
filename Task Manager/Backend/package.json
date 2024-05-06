@@ -5,8 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "dev": "env-cmd ./config/dev.env node server.js"
+    "start": "env-cmd -f .env.local node server.js"
   },
   "author": "Rahul Mahato",
   "license": "ISC",
@@ -21,6 +20,7 @@
     "validator": "^13.11.0"
   },
   "devDependencies": {
-    "env-cmd": "^10.1.0"
+    "env-cmd": "^10.1.0",
+    "nodemon": "^3.1.0"
   }
 }

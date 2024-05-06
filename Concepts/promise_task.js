@@ -5,7 +5,7 @@
 // 4. get and print the total number of incomplete task 
 // 5. test your work
 
-const { Task } = require("../Database/db");
+const { Task } = require("../Task Manager/Backend/Database/db");
 
 //promise-1 : deleting the task of given id.
 //promise-2 : counting all the task which is not completed.

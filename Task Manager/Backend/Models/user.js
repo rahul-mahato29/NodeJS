@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const jwtsecretkey = 'thisismynewcourse'
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -58,7 +57,7 @@ const UserSchema = new mongoose.Schema({
 //defining a function for generating a jwt-token
 UserSchema.methods.generateAuthToken = async function() {
     const user = this;  //this will return all the details of the user who register
-    const token = jwt.sign({_id: user._id.toString()}, jwtsecretkey)
+    const token = jwt.sign({_id: user._id.toString()}, process.env.JWT_SECRET)
 
     user.tokens = user.tokens.concat({token});    //user.token will be empty from the user-details that we get from "this"-keyword, here we are concatinating the generated token
     await user.save();

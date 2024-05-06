@@ -1,4 +1,4 @@
-const { User } = require("../Database/db");
+const { User } = require("../Task Manager/Backend/Database/db");
 
 
 //Below we are updating the age, and find the total number of users having updated age using Promise-chaining.

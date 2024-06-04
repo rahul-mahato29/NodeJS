@@ -1,11 +1,18 @@
 const request = require('supertest');
+const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 const app = require('../app');
 const User = require('../Models/user');
 
+const userOneId = new mongoose.Types.ObjectId();
 const userOne = {
+    _id: userOneId,
     name: "Mike",
     email: "mike@gmail.com",
-    password: "mike@123!"
+    password: "mike@123!",
+    tokens: [{
+        token: jwt.sign({ _id: userOneId }, process.env.JWT_SECRET)
+    }]
 }
 
 beforeEach(async () => {
@@ -20,7 +27,7 @@ test('Register-User', async () => {
         "password": "Rahul@123!",
         "age": 22
     }).expect(200)   //here 200 is the success status code.
-})  
+})
 
 test('Login-User', async () => {
     await request(app).post('/user/login').send({
@@ -34,4 +41,42 @@ test('Not-Login-User', async () => {
         email: userOne.email,
         password: "WrongPassword"
     }).expect(400)
+})
+
+test('Get-All-User', async () => {
+    await request(app)
+        .get('/user/allUsers')
+        .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+        .send()
+        .expect(200)
+})
+
+test('Unauthenticated-User', async () => {
+    await request(app)
+        .get('/user/allUsers')
+        .send()
+        .expect(400)
+})
+
+test('Get-User-By-Id', async () => {
+    await request(app)
+        .get(`/user/${userOneId}`)
+        .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+        .send()
+        .expect(200)
+})
+
+test('Delete-User-Account-By-Id', async () => {
+    await request(app)
+        .delete(`/user/${userOneId}`)
+        .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+        .send()
+        .expect(200)
+})
+
+test('Not-Delete-Unauthorized-User', async () => {
+    await request(app)
+        .delete(`/user/${userOneId}`)
+        .send()
+        .expect(400)
 })

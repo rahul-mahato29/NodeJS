@@ -4,8 +4,11 @@
   "description": "Backend for task-manager application",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "env-cmd -f .env.prod node server.js"
+    "start": "env-cmd -f .env.local node server.js",
+    "test": "env-cmd -f .env.test jest --watchAll"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "author": "Rahul Mahato",
   "license": "ISC",
@@ -21,6 +24,8 @@
   },
   "devDependencies": {
     "env-cmd": "^10.1.0",
-    "nodemon": "^3.1.0"
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.0",
+    "supertest": "^7.0.0"
   }
 }

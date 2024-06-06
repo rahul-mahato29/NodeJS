@@ -39,7 +39,6 @@ router.post('/login', async (req, res) => {
 
 //user logout from a specific system
 router.post('/logout', auth, async (req, res) => {
-    console.log("control in logout")
     try{
         req.user.tokens = await req.user.tokens.filter((token) => {       //req.user - from middleware
             return token.token !== req.token;                    //req.token - from middleware

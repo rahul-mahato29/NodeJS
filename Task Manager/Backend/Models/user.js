@@ -54,6 +54,19 @@ const UserSchema = new mongoose.Schema({
     timestamps: true
 })
 
+//deleting the password and tokens from the response
+// The toJSON method can be used to customize the JSON representation of an object.
+// The toJSON method is called automatically by JSON.stringify. And when we send or receive any request/response then JSON.stringify() get called, so this time only this "toJSON" also get called.
+UserSchema.methods.toJSON = function () {
+    const user = this
+    const userObject = user.toObject()
+
+    delete userObject.password
+    delete userObject.tokens
+
+    return userObject 
+}
+
 //defining a function for generating a jwt-token
 UserSchema.methods.generateAuthToken = async function() {
     const user = this;  //this will return all the details of the user who register
